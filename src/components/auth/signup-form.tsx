@@ -1,90 +1,156 @@
-import { useState } from "react";
-import { Eye } from "lucide-react";
-import SocialButtons from "@/pages/auth/social-buttons";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { PasswordInput } from "@/components/common/password-input";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormMessage,
+} from "@/components/ui/form";
+import SocialButtons from "@/components/auth/social-buttons";
+
+import { signupSchema } from "@/lib/zod/auth-schemas";
+import type { SignupFormValues } from "@/lib/zod/auth-schemas";
 
 export default function SignupForm() {
-    const [showPassword, setShowPassword] = useState(false);
-    const [agreedToTerms, setAgreedToTerms] = useState(true);
+    const form = useForm<SignupFormValues>({
+        resolver: zodResolver(signupSchema),
+        defaultValues: {
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            agreedToTerms: true,
+        },
+    });
+
+    const onSubmit = (data: SignupFormValues) => {
+        console.log("Form submitted:", data);
+        // Handle signup logic here
+    };
+
+    const inputClassName = "input";
 
     return (
-        <form className="space-y-5">
-            {/* Name fields */}
-
-            <input
-                type="text"
-                placeholder="Your Name"
-                className="w-full px-5 py-4 bg-[#3e3e4e] text-white placeholder-gray-500 rounded-xl border border-transparent focus:border-[#8b7fd6] focus:outline-none transition-all"
-            />
-
-            {/* Email */}
-            <input
-                type="email"
-                placeholder="Email"
-                className="w-full px-5 py-4 bg-[#3e3e4e] text-white placeholder-gray-500 rounded-xl border border-transparent focus:border-[#8b7fd6] focus:outline-none transition-all"
-            />
-
-            {/* Password */}
-            <div className="relative">
-                <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    className="w-full px-5 py-4 bg-[#3e3e4e] text-white placeholder-gray-500 rounded-xl border border-transparent focus:border-[#8b7fd6] focus:outline-none transition-all pr-12"
-                />
-                <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-                >
-                    <Eye className="w-5 h-5" />
-                </button>
-            </div>
-
-            {/* Terms checkbox */}
-            <div className="flex items-center gap-3">
-                <div
-                    onClick={() => setAgreedToTerms(!agreedToTerms)}
-                    className="w-6 h-6 rounded bg-white flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors"
-                >
-                    {agreedToTerms && (
-                        <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 14 14"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M11.6667 3.5L5.25 9.91667L2.33333 7"
-                                stroke="#2d2d3a"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                {/* Name field */}
+                <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <Input
+                                    placeholder="Your Name"
+                                    className={inputClassName}
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage className="text-red-400" />
+                        </FormItem>
                     )}
-                </div>
-                <label
-                    className="text-gray-300 text-sm cursor-pointer"
-                    onClick={() => setAgreedToTerms(!agreedToTerms)}
-                >
-                    I agree to the{" "}
-                    <a
-                        href="#"
-                        className="text-white underline hover:text-gray-200 transition-colors"
-                    >
-                        Terms & Conditions
-                    </a>
-                </label>
-            </div>
+                />
 
-            {/* Submit button */}
-            <button
-                type="submit"
-                className="w-full py-4 bg-[#8b7fd6] hover:bg-[#9d91e3] text-white rounded-xl transition-all mt-8"
-            >
-                Create account
-            </button>
-            <SocialButtons />
-        </form>
+                {/* Email field */}
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <Input
+                                    type="email"
+                                    placeholder="Email"
+                                    className={inputClassName}
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage className="text-red-400" />
+                        </FormItem>
+                    )}
+                />
+
+                {/* Password field */}
+                <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <PasswordInput
+                                    placeholder="Enter your password"
+                                    className={inputClassName}
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage className="text-red-400" />
+                        </FormItem>
+                    )}
+                />
+
+                {/* Confirm Password field */}
+                <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <PasswordInput
+                                    placeholder="Confirm your password"
+                                    className={inputClassName}
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage className="text-red-400" />
+                        </FormItem>
+                    )}
+                />
+
+                {/* Terms checkbox */}
+                <FormField
+                    control={form.control}
+                    name="agreedToTerms"
+                    render={({ field }) => (
+                        <FormItem>
+                            <div className="flex items-center gap-3">
+                                <FormControl>
+                                    <Checkbox
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
+                                        className="bg-background-secondary border-brand"
+                                    />
+                                </FormControl>
+                                <label
+                                    className="text-foreground-muted text-sm cursor-pointer"
+                                    onClick={() => field.onChange(!field.value)}
+                                >
+                                    I agree to the{" "}
+                                    <a
+                                        href="#"
+                                        className="text-brand text-sm cursor-pointer"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        Terms & Conditions
+                                    </a>
+                                </label>
+                            </div>
+                            <FormMessage className="text-red-400" />
+                        </FormItem>
+                    )}
+                />
+
+                {/* Submit button */}
+                <Button type="submit" className="button">
+                    Create account
+                </Button>
+
+                <SocialButtons />
+            </form>
+        </Form>
     );
 }

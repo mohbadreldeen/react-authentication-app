@@ -3,7 +3,14 @@
 :root {
     --font-size: 16px;
     --background: #ffffff;
-    --foreground: oklch(0.145 0 0);
+    --background-primary: #f4eefa;
+    --background-secondary: #fbfbfd;
+    --background-tertiary: #ffffff;
+    --foreground: #231934;
+    --foreground-muted: #6b647e;
+    --foreground-brand: #ffffff;
+    --brand: #6e54b5;
+    --brand-secondary: #22194d;
     --card: #ffffff;
     --card-foreground: oklch(0.145 0 0);
     --popover: oklch(1 0 0);
@@ -39,12 +46,15 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
-    --font-logo: "Russo One", sans-serif;
+    --font-logo: "Nova Square", sans-serif;
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
+    --background-primary: #2b2738;
+    --background-secondary: #3e3e4e;
+    --background-tertiary: #676279;
+    --foreground: rgb(223, 219, 232);
+    --foreground-muted: #6b647e;
     --card: oklch(0.145 0 0);
     --card-foreground: oklch(0.985 0 0);
     --popover: oklch(0.145 0 0);
@@ -80,8 +90,15 @@
 }
 
 @theme inline {
-    --color-background: var(--background);
+    --color-background: var(--background-primary);
+    --color-background-primary: var(--background-primary);
+    --color-background-secondary: var(--background-secondary);
+    --color-background-tertiary: var(--background-tertiary);
     --color-foreground: var(--foreground);
+    --color-foreground-muted: var(--foreground-muted);
+    --color-foreground-brand: var(--foreground-brand);
+    --color-brand: var(--brand);
+    --color-brand-secondary: var(--brand-secondary);
     --color-card: var(--card);
     --color-card-foreground: var(--card-foreground);
     --color-popover: var(--popover);
@@ -179,4 +196,11 @@
         font-weight: var(--font-weight-normal);
         line-height: 1.5;
     }
+}
+
+.input {
+    @apply h-12 px-5 bg-background-secondary text-foreground-muted placeholder-foreground-muted rounded-sm border border-transparent focus:border-[#8b7fd6] focus:outline-none transition-all focus-visible:ring-0 focus-visible:ring-offset-0;
+}
+.button {
+    @apply w-full h-12 py-3 bg-brand hover:bg-brand/80 text-foreground-brand rounded-sm transition-all my-3 cursor-pointer;
 }
