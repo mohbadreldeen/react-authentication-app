@@ -1,7 +1,29 @@
 import { FcGoogle } from "react-icons/fc";
-import { FaApple } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
+import { authClient } from "@/lib/auth-client";
+import { useState } from "react";
 
 export default function SocialButtons() {
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleOAuthClick = async (provider: string) => {
+        try {
+            setIsLoading(true);
+            const frontendURL = "http://localhost:5173";
+            console.log(
+                "Calling social sign-in with callbackURL:",
+                frontendURL
+            );
+            await authClient.signIn.social({
+                provider: provider as "google" | "github" | "apple",
+                callbackURL: frontendURL,
+            });
+        } catch (error) {
+            console.error("OAuth error:", error);
+            setIsLoading(false);
+        }
+    };
+
     return (
         <>
             {/* Social login */}
@@ -18,17 +40,21 @@ export default function SocialButtons() {
             <div className="flex gap-4">
                 <button
                     type="button"
-                    className="flex-1 flex items-center justify-center gap-3 py-4 bg-background-secondary hover:bg-background-secondary/90 text-foreground rounded-sm border border-transparent hover:border-brand transition-all cursor-pointer"
+                    onClick={() => handleOAuthClick("google")}
+                    disabled={isLoading}
+                    className="flex-1 flex items-center justify-center gap-3 py-4 bg-background-secondary hover:bg-background-secondary/90 disabled:opacity-50 disabled:cursor-not-allowed text-foreground rounded-sm border border-transparent hover:border-brand transition-all cursor-pointer"
                 >
                     <FcGoogle size={24} />
                     <span>Google</span>
                 </button>
                 <button
                     type="button"
-                    className="flex-1 flex items-center justify-center gap-3 py-4 bg-background-secondary hover:bg-background-secondary/90 text-foreground rounded-sm border border-transparent hover:border-brand transition-all cursor-pointer"
+                    onClick={() => handleOAuthClick("github")}
+                    disabled={isLoading}
+                    className="flex-1 flex items-center justify-center gap-3 py-4 bg-background-secondary hover:bg-background-secondary/90 disabled:opacity-50 disabled:cursor-not-allowed text-foreground rounded-sm border border-transparent hover:border-brand transition-all cursor-pointer"
                 >
-                    <FaApple size={24} className="fill-foreground" />
-                    <span>Apple</span>
+                    <FaGithub size={24} className="fill-foreground" />
+                    <span>GitHub</span>
                 </button>
             </div>
         </>

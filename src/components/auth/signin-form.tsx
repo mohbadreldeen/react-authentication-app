@@ -16,6 +16,8 @@ import {
     FormItem,
     FormMessage,
 } from "@/components/ui/form";
+import { Spinner } from "@/components/ui/spinner";
+
 import SocialButtons from "@/components/auth/social-buttons";
 
 import { signinSchema } from "@/features/zod/auth-schemas";
@@ -138,7 +140,14 @@ export default function SigninForm() {
 
                 {/* Submit button */}
                 <Button type="submit" className="button" disabled={isLoading}>
-                    Log in
+                    {isLoading ? (
+                        <>
+                            <Spinner className="w-5 h-5 text-white" />
+                            Signing in ...
+                        </>
+                    ) : (
+                        "Signin"
+                    )}
                 </Button>
 
                 <SocialButtons />

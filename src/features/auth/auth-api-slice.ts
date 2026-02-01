@@ -29,7 +29,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         signin: builder.mutation<AuthResponse, SigninRequest>({
             query: (credentials) => ({
-                url: "/auth/sign-in/email",
+                url: "/api/v1/auth/sign-in/email",
                 method: "POST",
                 body: credentials,
             }),
@@ -37,7 +37,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
         }),
         signup: builder.mutation<AuthResponse, SignupRequest>({
             query: (userData) => ({
-                url: "/auth/sign-up/email",
+                url: "/api/v1/auth/sign-up/email",
                 method: "POST",
                 body: userData,
             }),
@@ -45,14 +45,17 @@ export const authApiSlice = apiSlice.injectEndpoints({
         }),
         signout: builder.mutation<void, void>({
             query: () => ({
-                url: "/auth/sign-out",
+                url: "/api/v1/auth/sign-out",
                 method: "POST",
             }),
             invalidatesTags: ["Session", "User"],
         }),
         getSession: builder.query<AuthResponse | null, void>({
-            query: () => "/auth/get-session",
+            query: () => "/api/v1/auth/get-session",
             providesTags: ["Session"],
+        }),
+        oauthSignin: builder.query<{ url: string }, string>({
+            query: (provider) => `/api/v1/auth/oauth/${provider}`,
         }),
     }),
 });
@@ -62,4 +65,5 @@ export const {
     useSignupMutation,
     useSignoutMutation,
     useGetSessionQuery,
+    useOauthSigninQuery,
 } = authApiSlice;
