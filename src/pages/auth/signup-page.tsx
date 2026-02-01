@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { AuthLayout } from "./layout";
 import SignupForm from "@/components/auth/signup-form";
 
-export function SignupPage() {
+export default function SignupPage() {
     return (
         <AuthLayout activeDot={2}>
             <h1 className="text-white text-4xl mb-4">Create an account</h1>

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { AuthLayout } from "./layout";
 import SigninForm from "@/components/auth/signin-form";
 
-export function LoginPage() {
+export default function SigninPage() {
     return (
         <AuthLayout activeDot={1}>
             <h1 className="text-foreground text-4xl mb-4">Welcome back</h1>

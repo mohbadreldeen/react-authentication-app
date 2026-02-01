@@ -199,7 +199,7 @@
 }
 
 .input {
-    @apply h-12 px-5 bg-background-secondary text-foreground-muted placeholder-foreground-muted rounded-sm border border-transparent focus:border-[#8b7fd6] focus:outline-none transition-all focus-visible:ring-0 focus-visible:ring-offset-0;
+    @apply h-12 px-5 bg-background-secondary text-foreground placeholder-foreground-muted rounded-sm border border-transparent focus:border-brand focus:outline-none transition-all focus-visible:ring-0 focus-visible:ring-offset-0;
 }
 .button {
     @apply w-full h-12 py-3 bg-brand hover:bg-brand/80 text-foreground-brand rounded-sm transition-all my-3 cursor-pointer;

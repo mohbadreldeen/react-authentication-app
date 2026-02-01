@@ -1,6 +1,9 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+
+import { useSigninMutation } from "@/features/auth/auth-api-slice";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,11 +18,18 @@ import {
 } from "@/components/ui/form";
 import SocialButtons from "@/components/auth/social-buttons";
 
-import { signinSchema } from "@/lib/zod/auth-schemas";
-import type { SigninFormValues } from "@/lib/zod/auth-schemas";
+import { signinSchema } from "@/features/zod/auth-schemas";
+import type { SigninFormValues } from "@/features/zod/auth-schemas";
 
 export default function SigninForm() {
     const [rememberMe, setRememberMe] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from =
+        (location.state as { from?: { pathname: string } })?.from?.pathname ||
+        "/";
+
+    const [signin, { isLoading }] = useSigninMutation();
 
     const form = useForm<SigninFormValues>({
         resolver: zodResolver(signinSchema),
@@ -29,9 +39,24 @@ export default function SigninForm() {
         },
     });
 
-    const onSubmit = (data: SigninFormValues) => {
-        console.log("Form submitted:", data, "Remember me:", rememberMe);
-        // Handle signin logic here
+    useEffect(() => {
+        form.setFocus("email");
+    }, []);
+
+    const onSubmit = async (data: SigninFormValues) => {
+        try {
+            await signin({
+                email: data.email,
+                password: data.password,
+            }).unwrap();
+            form.reset();
+            navigate(from, { replace: true });
+        } catch (err: unknown) {
+            const error = err as { data?: { message?: string } };
+            form.setError("root", {
+                message: error?.data?.message || "Sign in failed",
+            });
+        }
     };
 
     const inputClassName = "input";
@@ -50,6 +75,7 @@ export default function SigninForm() {
                                     type="email"
                                     placeholder="Email"
                                     className={inputClassName}
+                                    disabled={isLoading}
                                     {...field}
                                 />
                             </FormControl>
@@ -68,6 +94,7 @@ export default function SigninForm() {
                                 <PasswordInput
                                     placeholder="Enter your password"
                                     className={inputClassName}
+                                    disabled={isLoading}
                                     {...field}
                                 />
                             </FormControl>
@@ -102,8 +129,15 @@ export default function SigninForm() {
                     </a>
                 </div>
 
+                {/* Error message display */}
+                {form.formState.errors.root && (
+                    <p className="text-red-400 text-sm" role="alert">
+                        {form.formState.errors.root.message}
+                    </p>
+                )}
+
                 {/* Submit button */}
-                <Button type="submit" className="button">
+                <Button type="submit" className="button" disabled={isLoading}>
                     Log in
                 </Button>
 

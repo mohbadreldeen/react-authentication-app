@@ -1,5 +1,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { useSignupMutation } from "@/features/auth/auth-api-slice";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -13,10 +18,13 @@ import {
 } from "@/components/ui/form";
 import SocialButtons from "@/components/auth/social-buttons";
 
-import { signupSchema } from "@/lib/zod/auth-schemas";
-import type { SignupFormValues } from "@/lib/zod/auth-schemas";
+import { signupSchema } from "@/features/zod/auth-schemas";
+import type { SignupFormValues } from "@/features/zod/auth-schemas";
 
 export default function SignupForm() {
+    const navigate = useNavigate();
+    const [signup, { isLoading }] = useSignupMutation();
+
     const form = useForm<SignupFormValues>({
         resolver: zodResolver(signupSchema),
         defaultValues: {
@@ -28,9 +36,25 @@ export default function SignupForm() {
         },
     });
 
-    const onSubmit = (data: SignupFormValues) => {
-        console.log("Form submitted:", data);
-        // Handle signup logic here
+    useEffect(() => {
+        form.setFocus("name");
+    }, []);
+
+    const onSubmit = async (data: SignupFormValues) => {
+        try {
+            await signup({
+                name: data.name,
+                email: data.email,
+                password: data.password,
+            }).unwrap();
+            form.reset();
+            navigate("/");
+        } catch (err: unknown) {
+            const error = err as { data?: { message?: string } };
+            form.setError("root", {
+                message: error?.data?.message || "Sign up failed",
+            });
+        }
     };
 
     const inputClassName = "input";
@@ -48,6 +72,7 @@ export default function SignupForm() {
                                 <Input
                                     placeholder="Your Name"
                                     className={inputClassName}
+                                    disabled={isLoading}
                                     {...field}
                                 />
                             </FormControl>
@@ -67,6 +92,7 @@ export default function SignupForm() {
                                     type="email"
                                     placeholder="Email"
                                     className={inputClassName}
+                                    disabled={isLoading}
                                     {...field}
                                 />
                             </FormControl>
@@ -85,6 +111,7 @@ export default function SignupForm() {
                                 <PasswordInput
                                     placeholder="Enter your password"
                                     className={inputClassName}
+                                    disabled={isLoading}
                                     {...field}
                                 />
                             </FormControl>
@@ -103,6 +130,7 @@ export default function SignupForm() {
                                 <PasswordInput
                                     placeholder="Confirm your password"
                                     className={inputClassName}
+                                    disabled={isLoading}
                                     {...field}
                                 />
                             </FormControl>
@@ -123,6 +151,7 @@ export default function SignupForm() {
                                         checked={field.value}
                                         onCheckedChange={field.onChange}
                                         className="bg-background-secondary border-brand"
+                                        disabled={isLoading}
                                     />
                                 </FormControl>
                                 <label
@@ -144,9 +173,16 @@ export default function SignupForm() {
                     )}
                 />
 
+                {/* Error message display */}
+                {form.formState.errors.root && (
+                    <p className="text-red-400 text-sm" role="alert">
+                        {form.formState.errors.root.message}
+                    </p>
+                )}
+
                 {/* Submit button */}
-                <Button type="submit" className="button">
-                    Create account
+                <Button type="submit" className="button" disabled={isLoading}>
+                    {isLoading ? "Creating account..." : "Create account"}
                 </Button>
 
                 <SocialButtons />
